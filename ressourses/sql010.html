@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Contraintes déclaratives</title>
+</head>
+<body>
+<a href="sql009.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql011.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec73">2.2  Contraintes déclaratives</h2>
+<ul>
+<li><a href="sql010.html#sec74">Playlists</a>
+</li><li><a href="sql010.html#sec75">Mise en place de contraintes</a>
+</li></ul>
+<h3 class="subsection" id="sec74">2.2.1  Playlists</h3>
+<p>Créez les tables suivantes :</p><pre class="prettyprint">SELECT * FROM MP3 ; 
+SELECT * FROM PLAYLIST;
+SELECT * FROM APPARTIENT;
+
+numMp3 nomMp3
+1 Get Lucky
+2 Locked Down
+numPlaylist nomPlaylist
+1 Soirée
+2 Voiture
+numMp3 numPlaylist
+1 1
+2 1
+1 2
+
+</pre><p>
+<a href="scripts/playlists/script.sql">Corrigé</a>
+</p>
+<h3 class="subsection" id="sec75">2.2.2  Mise en place de contraintes</h3>
+<p>Nous nous proposons de modifier le script de création de table de
+l’annexe <a href="sql018.html#livraisonsSansContrainte">A.1</a>. </p><h4 class="subsubsection" id="sec76">Exercice 1 </h4>
+<p>Modifiez le script de façon à ce que les saisies des valeurs suivantes
+soit obligatoire : 
+</p><ul class="itemize"><li class="li-itemize">
+Le prix des articles proposés
+</li><li class="li-itemize">La quantité des produits livrés
+</li></ul><h4 class="subsubsection" id="sec77">Exercice 2 </h4>
+<p>Repérez les colonnes, couples de colonnes, voire triplets de colonnes,
+à choisir comme clés primaires. Modifiez le script de façon à ce que
+cela se fasse.</p><h4 class="subsubsection" id="sec78">Exercice 3 </h4>
+<p>Faites de même pour les clés étrangères, sans oublier qu’il ne peut
+figurer dans une livraison que des produits proposés par le
+fournisseur qui effectue cette livraison. </p><h4 class="subsubsection" id="sec79">Exercice 4 </h4>
+<p>Insérez quelques lignes dans chaque table.</p><h4 class="subsubsection" id="sec80">Exercice 5 </h4>
+<p><span class="c001">oracle seulement</span></p><p>Repérez toutes les contraintes des questions précédentes
+dans <span class="c000">user_constraints</span>, supprimez-les. </p><h4 class="subsubsection" id="sec81">Exercice 6 </h4>
+<p>Redéfinissez toutes ces contraintes avec la syntaxe <span class="c000">ALTER
+TABLE</span> </p><p>
+<a href="corrigesTPs/contraintes.sql">Corrigé</a>
+</p>
+<hr>
+<a href="sql009.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql011.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<title>Introduction aux langage SQL
+</title>
+<link rel="stylesheet" type="text/css" href="sql.css">
+</head>
+<body><a href="../"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<hr>
+
+<!--HEVEA command line is: hevea -v -fix hevea.tex -o sql.html -O -exec xxdate.exe -->
+<!--HACHA command line is: hacha -v -tocbis sql.html -->
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<table class="title"><tr><td style="padding:1ex"><h1 class="titlemain"><span style="font-size:xx-large">Introduction aux langage SQL</span></h1><h3 class="titlerest"><span style="font-size:large">Alexandre Meslé</span></h3><h3 class="titlerest">11 septembre 2020</h3></td></tr>
+</table><h1 class="chapter" id="sec1">Table des matières</h1>
+<ul class="toc"><li class="li-toc">
+<a href="#sec2">Chapitre 1  Notes de cours</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql001.html#sec3">1.1  Introduction</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql001.html#sec4">1.1.1  Qu’est-ce qu’un SGBDR ?</a>
+</li><li class="li-toc"><a href="sql001.html#sec5">1.1.2  SQL</a>
+</li><li class="li-toc"><a href="sql001.html#sec6">1.1.3  Connexion à une base de données</a>
+</li><li class="li-toc"><a href="sql001.html#sec9">1.1.4  Consultation des tables</a>
+</li><li class="li-toc"><a href="sql001.html#sec10">1.1.5  Organisation relationnelle des données</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql002.html#sec14">1.2  Contraintes déclaratives</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql002.html#sec15">1.2.1  Valeurs par défaut</a>
+</li><li class="li-toc"><a href="sql002.html#sec16">1.2.2  Champs non renseignés</a>
+</li><li class="li-toc"><a href="sql002.html#sec17">1.2.3  Clé primaire</a>
+</li><li class="li-toc"><a href="sql002.html#sec18">1.2.4  Clé étrangère</a>
+</li><li class="li-toc"><a href="sql002.html#sec19">1.2.5  Syntaxe alternative</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql003.html#sec20">1.3  Introduction aux requêtes</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql003.html#sec21">1.3.1  Compléments sur <span class="c000">SELECT</span></a>
+</li><li class="li-toc"><a href="sql003.html#sec22">1.3.2  Instruction <span class="c000">WHERE</span></a>
+</li><li class="li-toc"><a href="sql003.html#sec23">1.3.3  Conditions</a>
+</li><li class="li-toc"><a href="sql003.html#sec31">1.3.4  Suppression</a>
+</li><li class="li-toc"><a href="sql003.html#sec32">1.3.5  Mise à jour</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql004.html#sec33">1.4  Jointures</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql004.html#sec34">1.4.1  Principe</a>
+</li><li class="li-toc"><a href="sql004.html#sec35">1.4.2  Produit cartésien</a>
+</li><li class="li-toc"><a href="sql004.html#sec36">1.4.3  Jointure</a>
+</li><li class="li-toc"><a href="sql004.html#sec37">1.4.4  Jointures réflexives</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql005.html#sec38">1.5  Agrégation de données</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql005.html#sec39">1.5.1  Fonctions d’agrégation</a>
+</li><li class="li-toc"><a href="sql005.html#sec44">1.5.2  Groupage</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql006.html#sec47">1.6  Vues</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql006.html#sec48">1.6.1  Définition</a>
+</li><li class="li-toc"><a href="sql006.html#sec49">1.6.2  Syntaxe</a>
+</li><li class="li-toc"><a href="sql006.html#sec50">1.6.3  Application</a>
+</li><li class="li-toc"><a href="sql006.html#sec51">1.6.4  Suppression</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql007.html#sec52">1.7  Requêtes imbriquées</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql007.html#sec53">1.7.1  Sous requêtes renvoyant une valeur scalaire</a>
+</li><li class="li-toc"><a href="sql007.html#sec57">1.7.2  Sous requêtes renvoyant une colonne</a>
+</li><li class="li-toc"><a href="sql007.html#sec58">1.7.3  Sous requêtes non correlées renvoyant une table</a>
+</li><li class="li-toc"><a href="sql007.html#sec59">1.7.4  Sous requêtes correlées</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql008.html#sec60">1.8  Procédures stockées</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql008.html#sec61">1.8.1  Exemple</a>
+</li><li class="li-toc"><a href="sql008.html#sec62">1.8.2  SQL Procédural</a>
+</li><li class="li-toc"><a href="sql008.html#sec63">1.8.3  Procédures</a>
+</li><li class="li-toc"><a href="sql008.html#sec64">1.8.4  Curseurs</a>
+</li><li class="li-toc"><a href="sql008.html#sec65">1.8.5  Triggers</a>
+</li></ul>
+</li></ul>
+</li><li class="li-toc"><a href="#sec66">Chapitre 2  Exercices</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql009.html#sec67">2.1  Survol de SQL</a>
+</li><li class="li-toc"><a href="sql010.html#sec73">2.2  Contraintes déclaratives</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql010.html#sec74">2.2.1  Playlists</a>
+</li><li class="li-toc"><a href="sql010.html#sec75">2.2.2  Mise en place de contraintes</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql011.html#sec82">2.3  Introduction aux requêtes</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql011.html#sec83">2.3.1  Modules et pré-requis</a>
+</li><li class="li-toc"><a href="sql011.html#sec91">2.3.2  Géométrie</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql012.html#sec99">2.4  Jointures</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql012.html#sec100">2.4.1  Livraisons</a>
+</li><li class="li-toc"><a href="sql012.html#sec108">2.4.2  Arbre généalogique</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql013.html#sec119">2.5  Agrégation de données</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql013.html#sec120">2.5.1  Fonctions d’agrégation</a>
+</li><li class="li-toc"><a href="sql013.html#sec124">2.5.2  Groupage</a>
+</li><li class="li-toc"><a href="sql013.html#sec130">2.5.3  
+<code>HAVING</code></a>
+</li></ul>
+</li><li class="li-toc"><a href="sql014.html#sec133">2.6  Vues</a>
+</li><li class="li-toc"><a href="sql015.html#sec140">2.7  Requêtes imbriquées</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql015.html#sec141">2.7.1  Sous-requêtes de type scalaire ou colonne</a>
+</li><li class="li-toc"><a href="sql015.html#sec149">2.7.2  Sous-requêtes de type table</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql016.html#sec153">2.8  Procédures stockées</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql016.html#sec154">2.8.1  Bibliothèque</a>
+</li></ul>
+</li><li class="li-toc"><a href="sql017.html#sec161">2.9  Révisions</a>
+</li></ul>
+</li><li class="li-toc"><a href="#sec165">Annexe A  Scripts de création de tables</a>
+<ul class="toc"><li class="li-toc">
+<a href="sql018.html#sec166">A.1  Livraisons Sans contraintes</a>
+</li><li class="li-toc"><a href="sql019.html#sec167">A.2  Modules et prerequis</a>
+</li><li class="li-toc"><a href="sql020.html#sec168">A.3  Géométrie</a>
+</li><li class="li-toc"><a href="sql021.html#sec169">A.4  Livraisons</a>
+</li><li class="li-toc"><a href="sql022.html#sec170">A.5  Arbre généalogique</a>
+</li><li class="li-toc"><a href="sql023.html#sec171">A.6  Comptes bancaires</a>
+</li><li class="li-toc"><a href="sql024.html#sec172">A.7  Comptes bancaires avec exceptions</a>
+</li><li class="li-toc"><a href="sql025.html#sec173">A.8  Secrétariat pédagogique</a>
+</li><li class="li-toc"><a href="sql026.html#sec174">A.9  Mariages</a>
+</li><li class="li-toc"><a href="sql027.html#sec175">A.10  Bibliothèque</a>
+</li></ul>
+</li></ul><p>	</p>
+<h1 class="chapter" id="sec2">Chapitre 1  Notes de cours</h1>
+<ul>
+<li><a href="sql001.html">Introduction</a>
+<ul>
+<li><a href="sql001.html#sec4">Qu’est-ce qu’un SGBDR ?</a>
+</li><li><a href="sql001.html#sec5">SQL</a>
+</li><li><a href="sql001.html#sec6">Connexion à une base de données</a>
+</li><li><a href="sql001.html#sec9">Consultation des tables</a>
+</li><li><a href="sql001.html#sec10">Organisation relationnelle des données</a>
+</li></ul>
+</li><li><a href="sql002.html">Contraintes déclaratives</a>
+<ul>
+<li><a href="sql002.html#sec15">Valeurs par défaut</a>
+</li><li><a href="sql002.html#sec16">Champs non renseignés</a>
+</li><li><a href="sql002.html#sec17">Clé primaire</a>
+</li><li><a href="sql002.html#sec18">Clé étrangère</a>
+</li><li><a href="sql002.html#sec19">Syntaxe alternative</a>
+</li></ul>
+</li><li><a href="sql003.html">Introduction aux requêtes</a>
+<ul>
+<li><a href="sql003.html#sec21">Compléments sur <span class="c000">SELECT</span></a>
+</li><li><a href="sql003.html#sec22">Instruction <span class="c000">WHERE</span></a>
+</li><li><a href="sql003.html#sec23">Conditions</a>
+</li><li><a href="sql003.html#sec31">Suppression</a>
+</li><li><a href="sql003.html#sec32">Mise à jour</a>
+</li></ul>
+</li><li><a href="sql004.html">Jointures</a>
+<ul>
+<li><a href="sql004.html#sec34">Principe</a>
+</li><li><a href="sql004.html#sec35">Produit cartésien</a>
+</li><li><a href="sql004.html#sec36">Jointure</a>
+</li><li><a href="sql004.html#sec37">Jointures réflexives</a>
+</li></ul>
+</li><li><a href="sql005.html">Agrégation de données</a>
+<ul>
+<li><a href="sql005.html#sec39">Fonctions d’agrégation</a>
+</li><li><a href="sql005.html#sec44">Groupage</a>
+</li></ul>
+</li><li><a href="sql006.html">Vues</a>
+<ul>
+<li><a href="sql006.html#sec48">Définition</a>
+</li><li><a href="sql006.html#sec49">Syntaxe</a>
+</li><li><a href="sql006.html#sec50">Application</a>
+</li><li><a href="sql006.html#sec51">Suppression</a>
+</li></ul>
+</li><li><a href="sql007.html">Requêtes imbriquées</a>
+<ul>
+<li><a href="sql007.html#sec53">Sous requêtes renvoyant une valeur scalaire</a>
+</li><li><a href="sql007.html#sec57">Sous requêtes renvoyant une colonne</a>
+</li><li><a href="sql007.html#sec58">Sous requêtes non correlées renvoyant une table</a>
+</li><li><a href="sql007.html#sec59">Sous requêtes correlées</a>
+</li></ul>
+</li><li><a href="sql008.html">Procédures stockées</a>
+<ul>
+<li><a href="sql008.html#sec61">Exemple</a>
+</li><li><a href="sql008.html#sec62">SQL Procédural</a>
+</li><li><a href="sql008.html#sec63">Procédures</a>
+</li><li><a href="sql008.html#sec64">Curseurs</a>
+</li><li><a href="sql008.html#sec65">Triggers</a>
+</li></ul>
+</li></ul>
+<h1 class="chapter" id="sec66">Chapitre 2  Exercices</h1>
+<ul>
+<li><a href="sql009.html">Survol de SQL</a>
+</li><li><a href="sql010.html">Contraintes déclaratives</a>
+<ul>
+<li><a href="sql010.html#sec74">Playlists</a>
+</li><li><a href="sql010.html#sec75">Mise en place de contraintes</a>
+</li></ul>
+</li><li><a href="sql011.html">Introduction aux requêtes</a>
+<ul>
+<li><a href="sql011.html#sec83">Modules et pré-requis</a>
+</li><li><a href="sql011.html#sec91">Géométrie</a>
+</li></ul>
+</li><li><a href="sql012.html">Jointures</a>
+<ul>
+<li><a href="sql012.html#sec100">Livraisons</a>
+</li><li><a href="sql012.html#sec108">Arbre généalogique</a>
+</li></ul>
+</li><li><a href="sql013.html">Agrégation de données</a>
+<ul>
+<li><a href="sql013.html#sec120">Fonctions d’agrégation</a>
+</li><li><a href="sql013.html#sec124">Groupage</a>
+</li><li><a href="sql013.html#sec130"><code>HAVING</code></a>
+</li></ul>
+</li><li><a href="sql014.html">Vues</a>
+</li><li><a href="sql015.html">Requêtes imbriquées</a>
+<ul>
+<li><a href="sql015.html#sec141">Sous-requêtes de type scalaire ou colonne</a>
+</li><li><a href="sql015.html#sec149">Sous-requêtes de type table</a>
+</li></ul>
+</li><li><a href="sql016.html">Procédures stockées</a>
+<ul>
+<li><a href="sql016.html#sec154">Bibliothèque</a>
+</li></ul>
+</li><li><a href="sql017.html">Révisions</a>
+</li></ul>
+<h1 class="chapter" id="sec165">Annexe A  Scripts de création de tables</h1>
+<ul>
+<li><a href="sql018.html">Livraisons Sans contraintes</a>
+</li><li><a href="sql019.html">Modules et prerequis</a>
+</li><li><a href="sql020.html">Géométrie</a>
+</li><li><a href="sql021.html">Livraisons</a>
+</li><li><a href="sql022.html">Arbre généalogique</a>
+</li><li><a href="sql023.html">Comptes bancaires</a>
+</li><li><a href="sql024.html">Comptes bancaires avec exceptions</a>
+</li><li><a href="sql025.html">Secrétariat pédagogique</a>
+</li><li><a href="sql026.html">Mariages</a>
+</li><li><a href="sql027.html">Bibliothèque</a>
+</li></ul>
+<hr>
+<a href="../"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<!--FOOTER-->
+<hr style="height:2"><blockquote class="quote"><em>Ce document a été traduit de L<sup>A</sup>T<sub>E</sub>X par </em><a href="http://hevea.inria.fr"><em>H<span style="font-size:small"><sup>E</sup></span>V<span style="font-size:small"><sup>E</sup></span>A</em></a></blockquote></body>
+</html>

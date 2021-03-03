@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Jointures</title>
+</head>
+<body>
+<a href="sql003.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql005.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec33">1.4  Jointures</h2>
+<ul>
+<li><a href="sql004.html#sec34">Principe</a>
+</li><li><a href="sql004.html#sec35">Produit cartésien</a>
+</li><li><a href="sql004.html#sec36">Jointure</a>
+</li><li><a href="sql004.html#sec37">Jointures réflexives</a>
+</li></ul>
+<h3 class="subsection" id="sec34">1.4.1  Principe</h3>
+<p>Nous utiliserons pour ce cours les données de <a href="sql019.html#modulesEtPrerequis">A.2</a>.</p><p>Si on souhaite connaître les numéros des modules pré-requis pour s’inscrire dans le module ’PL/SQL Oracle’, 
+il nous faut tout d’abord le numéro de ce module :</p><pre class="prettyprint">SELECT numMod
+FROM MODULE
+WHERE nomMod = 'PL/SQL Oracle'
+
+numMod
+6
+
+</pre><p>Ensuite, cherchons les numéros des modules pré-requis pour s’inscrire dans le module numéro 6, </p><pre class="prettyprint">SELECT numModPrereq 
+FROM PREREQUIS 
+WHERE numMod = 6;
+
+numModPrereq
+1
+5
+
+</pre><p>
+Et pour finir, allons récupérer les noms de ces modules, </p><pre class="prettyprint">SELECT nomMod 
+FROM MODULE 
+WHERE numMod IN (1, 5);
+
+nomMod
+Oracle
+Merise
+
+</pre><p>Vous êtes probablement tous en train de vous demander s’il n’existe pas une méthode plus simple et plus 
+rapide, et surtout une façon d’automatiser ce que nous venons de faire. 
+Il existe un moyen de sélectionner des données dans plusieurs tables simultanément.
+Pour traiter la question ci-dessus il suffisait de saisir :</p><pre class="prettyprint">SELECT m2.nomMod 
+FROM MODULE m1, MODULE m2, PREREQUIS p 
+WHERE m1.numMod = p.numMod 
+AND m2.numMod = p.numModprereq 
+AND m1.nomMod = 'PL/SQL Oracle';
+
+nomMod
+Oracle
+Merise
+
+</pre><p>Le but de ce chapitre est d’expliciter ce type de commande.</p>
+<h3 class="subsection" id="sec35">1.4.2  Produit cartésien</h3>
+<p>L’instruction <span class="c000">SELECT ... FROM ...</span> peut s’étendre de la façon suivante :</p><pre class="prettyprint">SELECT &lt;listecolonnes&gt;
+FROM &lt;listetables&gt;
+
+
+</pre><p>L’exemple ci-dessous vous montre le résultat d’une telle commande.</p><pre class="prettyprint">SELECT * 
+FROM PROPOSER, PRODUIT;
+
+numfou numprod prix numprod nomprod
+2 3 1 1 Bocal de cornichons
+2 2 2 1 Bocal de cornichons
+2 1 3 1 Bocal de cornichons
+1 1 2 1 Bocal de cornichons
+2 3 1 2 Tube de dentifrice
+2 2 2 2 Tube de dentifrice
+2 1 3 2 Tube de dentifrice
+1 1 2 2 Tube de dentifrice
+2 3 1 3 Flacon de lotion anti-escarres
+2 2 2 3 Flacon de lotion anti-escarres
+2 1 3 3 Flacon de lotion anti-escarres
+1 1 2 3 Flacon de lotion anti-escarres
+2 3 1 4 Déodorant fraîcheur 96 heures
+2 2 2 4 Déodorant fraîcheur 96 heures
+2 1 3 4 Déodorant fraîcheur 96 heures
+1 1 2 4 Déodorant fraîcheur 96 heures
+
+</pre><p>Placer une liste de tables dans le <span class="c000">FROM</span> revient à former toutes les combinaisons de lignes possibles.
+Cependant, cela a relativement peu de sens. </p>
+<h3 class="subsection" id="sec36">1.4.3  Jointure</h3>
+<p>Il serait plus intéressant, dans le cas présent, de ne voir 
+s’afficher que des lignes dont les numéros de produits concordent. 
+Pour ce faire, il suffit d’utiliser <span class="c000">WHERE</span>.
+Par exemple, </p><pre class="prettyprint">SELECT * 
+FROM PROPOSER, PRODUIT
+WHERE PROPOSER.numprod = PRODUIT.numprod;
+
+numfou numprod prix numprod nomprod
+1 1 2 1 Bocal de cornichons
+2 1 3 1 Bocal de cornichons
+2 2 2 2 Tube de dentifrice
+2 3 1 3 Flacon de lotion anti-escarres
+
+</pre><p>Nous avons mis en correspondance des lignes de la table <span class="c000">proposer</span> avec des lignes de la table 
+<span class="c000">produit</span> en utilisant le fait que <span class="c000">numprod</span> est une clé étrangère dans 
+<span class="c000">proposer</span>. Comme la colonne <span class="c000">numprod</span> apparaît deux fois dans la requête, 
+il est nécessaire de la préfixer par le nom de la table de sorte que chaque colonne 
+puisse être désignée de façon non ambiguë. Si on veut mettre face à face les noms des produits 
+et les noms des fournisseurs, il suffit de saisir la requête</p><pre class="prettyprint">SELECT nomfou,  nomprod
+FROM PRODUIT, FOURNISSEUR, PROPOSER
+WHERE PRODUIT.numProd = PROPOSER.numProd
+AND FOURNISSEUR.numFou = PROPOSER.numFou;
+
+nomfou nomprod
+Bocaux Gérard Bocal de cornichons
+Paramédical Gisèle Bocal de cornichons
+Paramédical Gisèle Tube de dentifrice
+Paramédical Gisèle Flacon de lotion anti-escarres
+
+</pre>
+<h3 class="subsection" id="sec37">1.4.4  Jointures réflexives</h3>
+<p>En utilisant la syntaxe suivante, il est possible de renommer les tables, </p><pre class="prettyprint">FROM &lt;table_1&gt; &lt;table_1_renommee&gt;, ..., &lt;table_n&gt; &lt;table_n_renommee&gt;
+</pre><p>Reformulons la requête ci-dessus, </p><pre class="prettyprint">SELECT nomfou,  nomprod
+FROM PRODUIT p, FOURNISSEUR f, PROPOSER pr
+WHERE p.numProd = pr.numProd
+AND f.numFou = pr.numFou;
+
+nomfou nomprod
+Bocaux Gérard Bocal de cornichons
+Paramédical Gisèle Bocal de cornichons
+Paramédical Gisèle Tube de dentifrice
+Paramédical Gisèle Flacon de lotion anti-escarres
+
+</pre><p>Le renommage permet entre autres de faire des jointures réflexives, c’est à dire entre une table et 
+elle même. Par exemple, en reprenant la table intervalle, </p><pre class="prettyprint">SELECT * FROM INTERVALLE;
+
+borneInf borneSup
+0 30
+2 3
+2 56
+5 10
+7 32
+8 27
+12 3
+12 30
+21 8
+34 26
+
+</pre><p>La commande ci-dessous affiche tous les couples d’intervalles ayant une borne en commun, </p><pre class="prettyprint">SELECT * FROM INTERVALLE i, INTERVALLE j
+WHERE (i.borneInf = j.borneInf AND i.borneSup &lt; j.borneSup)
+OR (i.borneInf &lt; j.borneInf AND i.borneSup = j.borneSup);
+
+borneInf borneSup borneInf borneSup
+0 30 12 30
+2 3 2 56
+2 3 12 3
+12 3 12 30
+
+</pre>
+<hr>
+<a href="sql003.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql005.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

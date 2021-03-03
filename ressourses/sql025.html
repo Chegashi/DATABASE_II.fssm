@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Secrétariat pédagogique</title>
+</head>
+<body>
+<a href="sql024.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql026.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec173">A.8  Secrétariat pédagogique</h2>
+<p><a id="secretariatPedagogique"></a></p><pre class="prettyprint">DROP TABLE IF EXISTS RESULTAT;
+DROP TABLE IF EXISTS EXAMEN;
+DROP TABLE IF EXISTS PREREQUIS;
+DROP TABLE IF EXISTS INSCRIPTION;
+DROP TABLE IF EXISTS MODULE;
+DROP TABLE IF EXISTS ETUDIANT;
+
+CREATE TABLE ETUDIANT
+ (numEtud int PRIMARY KEY, 
+ nom varchar(40), 
+ prenom varchar(40), 
+ datenaiss date, 
+ civilite varchar(4), 
+ patronyme varchar(40), 
+ numsecu varchar(15) NOT NULL
+ );
+
+CREATE TABLE MODULE
+ (numMod int PRIMARY KEY, 
+ nomMod varchar(15), 
+ effecMax int DEFAULT 30
+ );
+
+CREATE TABLE EXAMEN
+ (numMod int REFERENCES MODULE(numMod), 
+ numExam int, 
+ dateExam date,
+ PRIMARY KEY(numMod, numExam)
+ );
+
+CREATE TABLE INSCRIPTION
+ (numEtud int REFERENCES ETUDIANT(numEtud), 
+ numMod int REFERENCES MODULE(numMod), 
+ dateInsc date, 
+ PRIMARY KEY(numEtud, numMod)
+ );
+
+CREATE TABLE PREREQUIS
+ (numMod int REFERENCES MODULE(numMod), 
+ numModPrereq int REFERENCES MODULE(numMod), 
+ noteMin int NOT NULL DEFAULT 10,
+ PRIMARY KEY(numMod, numModPrereq)
+ );
+
+CREATE TABLE RESULTAT
+ (numMod int,
+ numExam int, 
+ numEtud int,
+ note int,
+ PRIMARY KEY(numMod, numExam, numEtud),
+ FOREIGN KEY (numMod, numExam) REFERENCES EXAMEN(numMod, numExam),
+ FOREIGN KEY (numEtud, numMod) REFERENCES INSCRIPTION(numEtud, numMod)
+ );
+
+INSERT INTO MODULE (numMod, nomMod) VALUES 
+(1, 'Oracle'), 
+(2, 'C++'),
+(3, 'C'),
+(4, 'Algo'),
+(5, 'Merise'),
+(6, 'PL/SQL Oracle'),
+(7, 'mySQL'),
+(8, 'Algo avancee');
+
+INSERT INTO PREREQUIS (numMod, numModPrereq) VALUES 
+(1, 5),
+(2, 3),
+(6, 5),
+(8, 5),
+(7, 5);
+INSERT INTO PREREQUIS VALUES (6, 1, 12);
+</pre><p>
+<a href="scripts/secretariatPedagogique/script.sql">Télécharger le fichier</a>
+ </p>
+<hr>
+<a href="sql024.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql026.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

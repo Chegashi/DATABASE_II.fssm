@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Vues</title>
+</head>
+<body>
+<a href="sql005.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql007.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec47">1.6  Vues</h2>
+<ul>
+<li><a href="sql006.html#sec48">Définition</a>
+</li><li><a href="sql006.html#sec49">Syntaxe</a>
+</li><li><a href="sql006.html#sec50">Application</a>
+</li><li><a href="sql006.html#sec51">Suppression</a>
+</li></ul>
+<h3 class="subsection" id="sec48">1.6.1  Définition</h3>
+<p>Une vue est une table contenant des données calculées sur celle d’une autre table. 
+Les données d’une vue sont tout le temps à jour. Si vous modifiez les données d’une 
+des tables sur lesquelles est calculée la vue, alors les modifications sont 
+automatiquement répercutées sur la vue.</p>
+<h3 class="subsection" id="sec49">1.6.2  Syntaxe</h3>
+<p>Appréciez la simplicité de la syntaxe :</p><pre class="prettyprint">CREATE VIEW &lt;nom_vue&gt; AS &lt;requete&gt;
+</pre>
+<h3 class="subsection" id="sec50">1.6.3  Application</h3>
+<p>Par exemple, la requête suivante met en correpondance les noms des 
+produits avec le nombre de fournisseurs qui le proposent :</p><pre class="prettyprint">SELECT nomprod, COUNT(numfou) AS NB_FOURNISSEURS
+FROM PRODUIT P 
+ LEFT OUTER JOIN PROPOSER PR 
+        ON P.numprod = PR.numprod
+GROUP BY nomprod
+ORDER BY COUNT(numfou);
+
+nomprod NB_FOURNISSEURS
+Déodorant fraîcheur 96 heures 0
+Tube de dentifrice 1
+Flacon de lotion anti-escarres 1
+Bocal de cornichons 2
+
+</pre><p>Ce type de requête sera explicité dans un cours ultérieur. Pour le moment, notez juste que les outils dont vous 
+disposez pour le moment ne vous permettront pas de formuler une requête affichant les noms des produits n’ayant 
+aucun fournisseur. Créons une vue pour ne pas avoir à se farcir la requête 
+chaque fois que nous aurons besoin de ces informations :</p><pre class="prettyprint">CREATE VIEW NB_FOURNISSEURS_PAR_PRODUIT AS
+SELECT nomprod, COUNT(numfou) AS NB_FOURNISSEURS
+FROM PRODUIT P 
+ LEFT OUTER JOIN PROPOSER PR 
+        ON P.numprod = PR.numprod
+GROUP BY nomprod
+ORDER BY COUNT(numfou);
+
+
+</pre><p>Une fois créée, on peut interroger une vue de la même façon qu’on interroge une table :</p><pre class="prettyprint">SELECT *
+FROM NB_FOURNISSEURS_PAR_PRODUIT;
+
+nomprod NB_FOURNISSEURS
+Déodorant fraîcheur 96 heures 0
+Tube de dentifrice 1
+Flacon de lotion anti-escarres 1
+Bocal de cornichons 2
+
+</pre><p>Notez que toute modification dans la table <span class="c000">PROPOSER</span> ou <span class="c000">PRODUIT</span> sera immédiatement répercutée
+sur la vue.</p><pre class="prettyprint">INSERT INTO PROPOSER VALUES (3, 4, 9);
+SELECT *
+FROM NB_FOURNISSEURS_PAR_PRODUIT;
+
+nomprod NB_FOURNISSEURS
+Tube de dentifrice 1
+Flacon de lotion anti-escarres 1
+Déodorant fraîcheur 96 heures 1
+Bocal de cornichons 2
+
+</pre><pre class="prettyprint">INSERT INTO PROPOSER VALUES (3, 4, 9);
+SELECT *
+FROM NB_FOURNISSEURS_PAR_PRODUIT;
+
+
+</pre><p>Maintenant, nous souhaitons voir s’afficher, pour tout <span class="c001">i</span>, le nombre de produits proposés par exactement <span class="c001">i</span> fournisseurs.</p><pre class="prettyprint">SELECT CONCAT ('Il y a ', COUNT(*), ' produit(s) qui est/sont proposé(s) par ', 
+ NB_FOURNISSEURS, ' fournisseur(s).') 
+        AS NOMBRE_DE_FOURNISSEURS 
+FROM NB_FOURNISSEURS_PAR_PRODUIT 
+GROUP BY NB_FOURNISSEURS
+ORDER BY NB_FOURNISSEURS;
+
+NOMBRE_DE_FOURNISSEURS
+Il y a 3 produit(s) qui est/sont proposé(s) par 1 fournisseur(s).
+Il y a 1 produit(s) qui est/sont proposé(s) par 2 fournisseur(s).
+
+</pre>
+<h3 class="subsection" id="sec51">1.6.4  Suppression</h3>
+<p>On supprime une vue avec l’instruction suivante :</p><pre class="prettyprint">DROP VIEW &lt;nom_vue&gt;;
+</pre>
+<hr>
+<a href="sql005.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql007.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

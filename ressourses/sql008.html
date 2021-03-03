@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Procédures stockées</title>
+</head>
+<body>
+<a href="sql007.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql009.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec60">1.8  Procédures stockées</h2>
+<ul>
+<li><a href="sql008.html#sec61">Exemple</a>
+</li><li><a href="sql008.html#sec62">SQL Procédural</a>
+</li><li><a href="sql008.html#sec63">Procédures</a>
+</li><li><a href="sql008.html#sec64">Curseurs</a>
+</li><li><a href="sql008.html#sec65">Triggers</a>
+</li></ul>
+<h3 class="subsection" id="sec61">1.8.1  Exemple</h3>
+<p>Étant données la base de données de [<a href="sql027.html#bibliotheque">A.10</a>]. Nous comptons 
+implémenter les contraintes suivantes.</p><ul class="itemize"><li class="li-itemize">
+Un exemplaire non empruntable ne peut pas être emprunté.
+</li><li class="li-itemize">Un exemplaire ne peut pas être en possession de deux adhérents à la fois.
+</li><li class="li-itemize">Un adhérent ne peut pas être en possession de deux exemplaires différents 
+d’un même ouvrage.
+</li><li class="li-itemize">Un adhérent ne peut pas emprunter si son abonnement n’est pas à jour.
+</li><li class="li-itemize">Un adhérent ne peut pas être en possession de plus de cinq livres.
+</li><li class="li-itemize">Une même personne ne peut pas être à la fois cataloguée comme auteur 
+et adhérent.
+</li></ul><p>Toutes ces contraintes ne sont pas <span class="c001">déclaratives</span>, ce qui signifie 
+qu’il est impossible dans le 
+<code>create table</code> de les prendre en compte.</p><p>Comment faire ?</p>
+<h3 class="subsection" id="sec62">1.8.2  SQL Procédural</h3>
+<p>Le SQL procédural est une extension impérative de SQL. Elle permet d’exécuter 
+des instructions à l’intérieur du serveur de base de données. Par exemple, </p><pre class="prettyprint">delimiter $$
+
+drop procedure compteARebours;
+
+create  procedure compteARebours(i integer)
+begin
+ declare j integer;
+ if i &gt;= 0 then 
+    set j = i;
+    while j &gt;= 0 do
+      select j;
+   set j = j - 1;
+    end while;
+ end if;
+end;
+
+call compteARebours(3);
+$$
+
+delimiter ;
+</pre><p>
+<a href="scripts/bibliotheque/compteARebours.sql">Télécharger le fichier</a>
+ </p>
+<h3 class="subsection" id="sec63">1.8.3  Procédures</h3>
+<p>Il est possible de stocker des procédures de la même façon que
+dans les langages impératifs.</p><pre class="prettyprint">delimiter $$
+
+drop procedure insertAdherent;
+create procedure insertAdherent (nom varchar(64), prenom varchar(64), mail varchar(64))
+begin
+ insert into personne (nompers, prenompers) values (nom, prenom);
+ insert into adherent (numpers, mailadherent) values (last_insert_id(), mail); 
+end
+$$
+
+call insertAdherent('Morflegroin', 'Marcel', 'marcel@morflegroin.com');
+call insertAdherent('Le Ballon', 'Gégé', 'gege.m@grosbuveur.com');
+call insertAdherent('Couledru', 'Gertrude', 'g.proflechettes@ligue-flechettes.fr');
+$$
+
+delimiter ;
+
+insert into personne (nompers, prenompers) values ('Rowlings', 'J. K.');
+
+delimiter $$
+
+drop procedure insertOuvrage;
+create procedure insertOuvrage (titre varchar(64), numAuteur integer, nombreExemplaires integer)
+begin
+ declare ouvrage_inserted_id integer;
+ declare i integer;
+ insert into ouvrage(numauteur, titreouvrage) values (numAuteur, titre);
+ set ouvrage_inserted_id = last_insert_id();
+ set i = 1;
+ while i &lt;= nombreExemplaires do
+       insert into exemplaire (numOuvrage, numExemplaire) values (ouvrage_inserted_id, i);
+       set i = i + 1;
+ end while;
+end
+$$
+
+delimiter ;
+
+call insertOuvrage('Harry Potter and the Deathly Hallows', 4, 10);
+</pre><p>
+<a href="scripts/bibliotheque/procedure.sql">Télécharger le fichier</a>
+ </p>
+<h3 class="subsection" id="sec64">1.8.4  Curseurs</h3>
+<p>Un curseur permet de parcourir une à une les lignes résultant d’un SELECT.</p><pre class="prettyprint">delimiter $$
+
+DROP PROCEDURE IF EXISTS AfficheUtilisateurs;
+CREATE PROCEDURE AfficheUtilisateurs()
+BEGIN
+ DECLARE num_pers integer;
+ DECLARE nom_pers varchar(64);
+ DECLARE prenom_pers varchar(64);
+ DECLARE nb_a integer;
+ DECLARE finished boolean DEFAULT FALSE;
+ DECLARE personnes CURSOR FOR SELECT numpers, nompers, prenompers FROM personne;
+ DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = TRUE;
+
+ OPEN personnes;
+ personnesloop: LOOP
+        FETCH personnes INTO num_pers, nom_pers, prenom_pers;
+        IF finished THEN
+           LEAVE personnesloop;
+        END IF;
+        SELECT COUNT(*) INTO nb_a FROM adherent WHERE numpers = num_pers;
+        IF nb_a &gt; 0 THEN
+           select concat(prenom_pers, ' ', nom_pers, ' est un adherent');
+        ELSE
+           select concat(prenom_pers, ' ', nom_pers, ' est un auteur');
+        END IF;
+ END LOOP;
+ CLOSE personnes;
+END;
+$$
+
+CALL AfficheUtilisateurs();
+$$
+
+delimiter ;
+</pre><p>
+<a href="scripts/bibliotheque/curseur.sql">Télécharger le fichier</a>
+ </p>
+<h3 class="subsection" id="sec65">1.8.5  Triggers</h3>
+<p>Un trigger est une procédure stockée de déclenchant automatiquement à la suite 
+d’un événement.</p><pre class="prettyprint">delimiter $$
+
+drop trigger if exists adherentBeforeInsert;
+create trigger adherentBeforeInsert before insert on adherent for each row
+begin
+ declare nb_aut integer;
+ declare error_msg varchar(128);
+ /* Met la date système par défaut  */
+ if new.daterenouvellement is null then
+    set new.daterenouvellement = now();
+ end if;
+ /* Vérifie que l'adhérent n'est pas déjà un auteur */
+ select count(*) into nb_aut
+        from ouvrage
+        where new.numpers = numauteur;
+ if nb_aut &gt; 0 then
+    set error_msg = concat('L\'adhérent ', new.numpers, 'est déjà un auteur.');
+    signal sqlstate '45000' set message_text = error_msg;
+ end if;
+end;
+$$
+
+delimiter ;
+</pre><p>
+<a href="scripts/bibliotheque/trigger.sql">Télécharger le fichier</a>
+ </p><p>	</p>
+<hr>
+<a href="sql007.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql009.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

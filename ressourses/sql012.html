@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Jointures</title>
+</head>
+<body>
+<a href="sql011.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql013.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec99">2.4  Jointures</h2>
+<ul>
+<li><a href="sql012.html#sec100">Livraisons</a>
+</li><li><a href="sql012.html#sec108">Arbre généalogique</a>
+</li></ul>
+<h3 class="subsection" id="sec100">2.4.1  Livraisons</h3>
+<p>Reprenons pour ce tp la base de données de <a href="sql021.html#livraisons">A.4</a>.</p><h4 class="subsubsection" id="sec101">Exercice 1 </h4>
+<p>
+
+
+
+Afficher tous les noms des produits dont le numéro a une occurrence
+dans la table <span class="c000">PROPOSER</span>. </p><pre class="prettyprint">
+nomprod
+Bocal de cornichons
+Tube de dentifrice
+Flacon de lotion anti-escarres
+
+</pre><h4 class="subsubsection" id="sec102">Exercice 2 </h4>
+<p>Afficher tous les noms des fournisseurs dont le numéro a une occurrence
+dans la table <span class="c000">PROPOSER</span>.</p><pre class="prettyprint">
+nomfou
+Bocaux Gérard
+Paramédical Gisèle
+
+</pre><h4 class="subsubsection" id="sec103">Exercice 3 </h4>
+<p>Afficher les noms des fournisseurs avec pour chaque fournisseur la
+liste des produits proposés. </p><pre class="prettyprint">
+nomfou nomprod
+Bocaux Gérard Bocal de cornichons
+Paramédical Gisèle Bocal de cornichons
+Paramédical Gisèle Tube de dentifrice
+Paramédical Gisèle Flacon de lotion anti-escarres
+
+</pre><h4 class="subsubsection" id="sec104">Exercice 4 </h4>
+<p>
+
+
+
+Afficher les noms des fournisseurs proposant ’Bocal de cornichons’ par
+ordre de prix croissant. </p><h4 class="subsubsection" id="sec105">Exercice 5 </h4>
+<p>
+
+
+
+Afficher les dates des livraisons effectuées par le fournisseur ’Bocaux Gérard’;</p><h4 class="subsubsection" id="sec106">Exercice 6 </h4>
+<p>
+
+
+
+Afficher les noms de tous les produits déjà livrés par le fournisseur ’Bocaux Gérard’;</p><h4 class="subsubsection" id="sec107">Exercice 7 </h4>
+<p>
+
+
+
+Afficher toutes les lignes de la table <span class="c000">LIVRAISON</span>
+correspondant à des livraisons dans lesquelles figure le produit
+’Bocal de cornichons’. </p>
+<h3 class="subsection" id="sec108">2.4.2  Arbre généalogique</h3>
+<p>Pour les exercices suivants, nous travaillerons sur les données
+de <a href="sql022.html#arbreGenealogique">A.5</a>. Dans les questions où il vous est demandé
+de formuler des requêtes retournant plusieurs personnes, il faut qu’il
+y ait une ligne par personne. </p><h4 class="subsubsection" id="sec109">Exercice 8 </h4>
+<p>Afficher les noms et les prénoms des enfants de Robert Baratheon.</p><pre class="prettyprint">
+nom prenom
+NULL Gendry
+Baratheon Joffrey
+Baratheon Tommen
+Baratheon Myrcella
+
+</pre><h4 class="subsubsection" id="sec110">Exercice 9 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des parents de Stannis Baratheon</p><pre class="prettyprint">
+nom prenom
+Estermont Cassana
+Baratheon Steffon
+
+</pre><h4 class="subsubsection" id="sec111">Exercice 10 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des enfants de Robert Baratheon et Cersei Lannister.</p><h4 class="subsubsection" id="sec112">Exercice 11 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des frères de Renly Baratheon.</p><h4 class="subsubsection" id="sec113">Exercice 12 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des cousins de Shireen Baratheon du coté de son père.</p><h4 class="subsubsection" id="sec114">Exercice 13 </h4>
+<p>
+
+
+
+Afficher les nom et prénom du demi-frère (du coté de leur père) des enfants de Cersei Lannister.</p><h4 class="subsubsection" id="sec115">Exercice 14 </h4>
+<p>
+
+
+
+Afficher les nom et prénom de la mère des enfants de Tywin Lannister. </p><h4 class="subsubsection" id="sec116">Exercice 15 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des neveux légitimes de Stannis Baratheon.</p><h4 class="subsubsection" id="sec117">Exercice 16 </h4>
+<p>
+
+
+
+Afficher les noms et prénoms des mères des petits-enfants de Cassana Estermont.</p><h4 class="subsubsection" id="sec118">Exercice 17 </h4>
+<p>
+
+
+
+Afficher les nom et prénom des parents et grand-parents de Tommen Baratheon.</p><pre class="prettyprint">
+nom prenom
+Estermont Cassana
+Baratheon Steffon
+Baratheon Robert
+Lannister Cersei
+Lannister Joanna
+Lannister Tywin
+
+</pre><p>N’oubliez pas : une ligne par personne.</p><p>
+<a href="corrigesTPs/requetesMultitabulaires.sql">Corrigé</a>
+</p>
+<hr>
+<a href="sql011.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql013.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.34">
+<link rel="stylesheet" type="text/css" href="sql.css">
+<title>Introduction aux requêtes</title>
+</head>
+<body>
+<a href="sql002.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql004.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+<hr>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+        <script src="run_prettify.js"></script>
+        
+<div class="center"><a href="sql.pdf">pdf</a> - <a href="sql.epub">e-book</a> - <a href="sql.tgz">archive</a></div><hr style="height:2">
+<h2 class="section" id="sec20">1.3  Introduction aux requêtes</h2>
+<ul>
+<li><a href="sql003.html#sec21">Compléments sur <span class="c000">SELECT</span></a>
+</li><li><a href="sql003.html#sec22">Instruction <span class="c000">WHERE</span></a>
+</li><li><a href="sql003.html#sec23">Conditions</a>
+</li><li><a href="sql003.html#sec31">Suppression</a>
+</li><li><a href="sql003.html#sec32">Mise à jour</a>
+</li></ul>
+<h3 class="subsection" id="sec21">1.3.1  Compléments sur <span class="c000">SELECT</span></h3>
+<p>Il est possible d’utiliser <span class="c000">SELECT</span> pour n’afficher que certaines colonnes d’une table. Syntaxe :</p><pre class="prettyprint">SELECT &lt;colonne_1&gt;, &lt;colonne_2&gt;, ..., &lt;colonne_n&gt;
+FROM &lt;table&gt;
+</pre><p>Cette instruction s’appelle une requête, elle affichera pour chaque ligne de la table les valeurs des 
+colonnes <span class="c001">colonne</span><sub>1</sub> à <span class="c001">colonne</span><sub><span class="c001">n</span></sub>. 
+Il est possible de supprimer les lignes en double à l’aide du mot-clé <span class="c000">DISTINCT</span>. Par exemple :</p><pre class="prettyprint">SELECT DISTINCT &lt;colonne_1&gt;, &lt;colonne_2&gt;, ..., &lt;colonne_n&gt;
+FROM &lt;table&gt;
+</pre><p>Pour trier les données, on utilise <span class="c000">ORDER BY</span>. Exemple : </p><pre class="prettyprint">SELECT &lt;colonne_1&gt;, &lt;colonne_2&gt;, ..., &lt;colonne_n&gt;
+FROM &lt;table&gt;
+ORDER BY &lt;colonne_1bis&gt;, &lt;colonne_2bis&gt;, ..., &lt;colonne_nbis&gt;
+</pre><p>Cette instruction trie les données par <span class="c001">colonne</span><sub>1<span class="c001">bis</span></sub> croissants. En cas d’égalité, le tri est fait par 
+<span class="c001">colonne</span><sub>2<span class="c001">bis</span></sub> croissants, etc. Pour trier par ordre décroissant, on ajoute <span class="c000">DESC</span> après le nom 
+de la colonne choisie comme critère décroissant. Par exemple :</p><pre class="prettyprint">SELECT &lt;colonne_1&gt;, &lt;colonne_2&gt;, ..., &lt;colonne_n&gt;
+FROM &lt;table&gt;
+ORDER BY &lt;colonne_1bis&gt; DESC, &lt;colonne_2bis&gt;, ..., &lt;colonne_nbis&gt;
+</pre>
+<h3 class="subsection" id="sec22">1.3.2  Instruction <span class="c000">WHERE</span></h3>
+<p>Cette instruction permet de ne sélectionner que certaines lignes de la table. Par exemple 
+la requête va afficher le nom du produit numéro 1 :</p><pre class="prettyprint">SELECT nomprod
+FROM produit
+WHERE numprod = 1
+
+
+</pre><p>La syntaxe générale est </p><pre class="prettyprint">SELECT &lt;colonne_1&gt;, &lt;colonne_2&gt;, ..., &lt;colonne_n&gt;
+FROM &lt;table&gt;
+WHERE &lt;condition&gt;
+</pre><p><span class="c000">condition</span> sera évaluée pour chaque ligne de la table, et seules celles qui véfieront cette 
+condition feront partie du résultat de la requête.</p>
+<h3 class="subsection" id="sec23">1.3.3  Conditions</h3>
+<h4 class="subsubsection" id="sec24">Comparaison</h4>
+<p>Les conditions peuvent être des relations d’égalité (=), de différence (&lt;&gt;), d’inégalité (&lt;, &gt;, &gt;= ou &lt;=) 
+sur des colonnes :</p><pre class="prettyprint">numero_client = 2
+nom_client = 'Marcel'
+prenom_client &lt;&gt; 'Ginette'
+salary &lt; 230
+taxes &gt;= 23000
+</pre>
+<h4 class="subsubsection" id="sec25">Négation</h4>
+<p>La négation d’une condition s’obtient à l’aide de <span class="c000">NOT</span>. Par exemple, il est possible de ré-ecrire les 
+conditions ci-avant :</p><pre class="prettyprint">NOT (numero_client &lt;&gt; 2)
+NOT (nom_client &lt;&gt; 'Marcel')
+NOT (prenom_client = 'Ginette')
+NOT (salary &gt;= 230) 
+NOT (taxes &lt; 23000)
+</pre>
+<h4 class="subsubsection" id="sec26">Connecteurs logiques</h4>
+<p>De même, vous avez à votre disposition tous les connecteurs logiques binaires : <span class="c000">AND</span>, <span class="c000">OR</span>.
+Ainsi, les deux conditions suivantes sont les mêmes :</p><pre class="prettyprint">NOT((nom = 'Raymond') AND (prenom &lt;&gt; 'Huguette'))
+(nom &lt;&gt; 'Raymond') OR (prenom = 'Huguette')
+</pre>
+<h4 class="subsubsection" id="sec27"><span class="c000">NULL</span>ité</h4>
+<p>Un champ non renseigné a la valeur <span class="c000">NULL</span>, dans une comparaison, <span class="c000">NULL</span> n’est jamais égal à quelque 
+valeur qu’il soit ! La condition suivante est toujours fausse :
+</p><pre class="prettyprint">NULL = NULL;
+</pre><p>La requête suivante ne renvoie aucune ligne :</p><pre class="prettyprint">INSERT INTO MP3 (numMp3) VALUES (3);
+SELECT * 
+FROM MP3
+WHERE nomMp3 = NULL;
+
+
+</pre><p>Pour tester la nullité d’un champ, on utilise <span class="c000">IS NULL</span>, par exemple :</p><pre class="prettyprint">SELECT * 
+FROM MP3
+WHERE nomMp3 IS NULL;
+
+
+</pre><p>La non-nullité se teste de deux façons :
+</p><pre class="prettyprint">WHERE NOT (nomMp3 IS NULL);
+</pre><p>ou encore </p><pre class="prettyprint">SELECT * 
+FROM MP3
+WHERE nomMp3 IS NOT NULL;
+
+numMp3 nomMp3
+1 Get Lucky
+2 Locked Down
+
+</pre>
+<h4 class="subsubsection" id="sec28">Encadrement</h4>
+<p>Une valeur numérique peut être encadrée à l’aide de l’opérateur <span class="c000">BETWEEN</span>, par exemple
+les deux conditions suivantes sont équivalentes :</p><pre class="prettyprint">SALAIRE BETWEEN 1000 AND 5000
+(SALAIRE &gt;= 1000) AND (SALAIRE &lt;= 5000)
+</pre>
+<h4 class="subsubsection" id="sec29">Inclusion</h4>
+<p>L’opérateur <span class="c000">IN</span> permet de tester l’appartenance à une liste de valeurs. Les deux propositions 
+suivantes sont équivalentes
+</p><pre class="prettyprint">NAME IN ('Gégé', 'Ginette', 'Marcel')
+(NAME = 'Gégé') OR (NAME = 'Ginette') OR (NAME = 'Marcel')
+</pre>
+<h4 class="subsubsection" id="sec30"><span class="c000">LIKE</span></h4>
+<p><span class="c000">LIKE</span> sert à comparer le contenu d’une variable à un littéral générique. Par exemple, la condition
+</p><pre class="prettyprint">NAME LIKE 'M%' 
+</pre><p>
+sera vérifiée si <span class="c000">NAME</span> commence par un <span class="c000">’M’</span>. Ca fonctionne aussi sur les valeurs de type numérique, 
+la condition 
+</p><pre class="prettyprint">SALARY LIKE '%000000000' 
+</pre><p>
+sera vérifiée si <span class="c000">SALARY</span> se termine par <span class="c000">000000000</span>. Le caractère <span class="c000">%</span> peut remplacer dans 
+le littéral n’importe quelle suite, vide ou non, de caractères ; il a le même rôle que <span class="c000">*</span> en DOS et en SHELL.
+Le caractère <span class="c000">_</span> remplace un et un seul caractère dans le littéral. Par exemple, la condition 
+</p><pre class="prettyprint">NAME LIKE 'K_r%'
+</pre><p>
+ne sera vérifiée que si <span class="c000">NAME</span> commence par un <span class="c000">’K’</span> et contient un <span class="c000">’r’</span> en troisième position.</p>
+<h3 class="subsection" id="sec31">1.3.4  Suppression</h3>
+<p>L’expression 
+</p><pre class="prettyprint">DELETE FROM &lt;NOMTABLE&gt; 
+WHERE &lt;CONDITION&gt;
+</pre><p>
+efface de la table <span class="c000">NOMTABLE</span> toutes les lignes vérifiant <span class="c000">condition</span>.
+Attention ! La commande 
+</p><pre class="prettyprint">DELETE FROM &lt;NOMTABLE&gt;
+</pre><p>
+efface toutes les lignes de la table <span class="c000">NOMTABLE</span> !</p>
+<h3 class="subsection" id="sec32">1.3.5  Mise à jour</h3>
+<p>L’expression 
+</p><pre class="prettyprint">UPDATE &lt;NOMTABLE&gt; 
+SET &lt;colonne_1&gt; = &lt;valeur_1&gt;, 
+&lt;colonne_2&gt; = &lt;valeur_2&gt;, 
+..., 
+&lt;colonne_n&gt; = &lt;valeur_n&gt;
+WHERE &lt;CONDITION&gt;
+</pre><p>
+modifie les lignes de la table <span class="c000">NOMTABLE</span> vérifiant <span class="c000">condition</span>. Elle 
+affecte au champ <span class="c001">colonne</span><sub><span class="c001">i</span></sub> la valeur <span class="c001">valeur</span><sub><span class="c001">i</span></sub>. Par exemple, </p><pre class="prettyprint">UPDATE CLIENT 
+SET prenomcli = 'Dark' 
+WHERE nomcli = 'Vador'
+</pre><p>affecte la valeur <span class="c000">’Dark’</span> aux champs <span class="c000">prenomcli</span> de toutes les lignes dont la valeur <span class="c000">nomcli</span> est 
+égale à <span class="c000">’Vador’</span>. Il est possible, dans une modification, d’utiliser les valeurs des autres champs de 
+la ligne, voire même l’ancienne valeur de ce champ. Par exemple, </p><pre class="prettyprint">UPDATE OPERATION
+SET montantoper = montantoper + 5000
+</pre><p>augmente les montants de toutes les opérations bancaires de 5000 (choisissez l’unité !).</p>
+<hr>
+<a href="sql002.html"><span class="glyphicon glyphicon-arrow-left"></span></a>
+<a href="index.html"><span class="glyphicon glyphicon-arrow-up"></span></a>
+<a href="sql004.html"><span class="glyphicon glyphicon-arrow-right"></span></a>
+</body>
+</html>
