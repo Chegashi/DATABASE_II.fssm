@@ -1,0 +1,91 @@
+--////////////////////////////////////////////////////////////////////////////////
+--////////////////////////////////////////////////////////////////////////////////
+
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+--Exercice 1
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE TRIGGER add_etudiant
+		BEFORE INSERT OR UPDATE
+		ON etudiante
+		FOR EACH ROW
+BEGIN
+		IF :new.dj > SYSDATE THEN
+			RAISE_APPLICATION_ERROR(-20001, 'Date superieure');
+		END IF;
+END;
+/
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Exercice 2
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE TRIGGER check_payment
+		BEFORE INSERT OR UPDATE
+		ON Payment
+		FOR EACH ROW
+DECLARE
+		total_a_payer Cours.frais%TYPE;
+		totale_deja_payee Payment.total%TYPE;
+		rest_a_payer Payment.total%TYPE;
+BEGIN
+		SELECT SUM(FRAIS) INTO total_a_payer
+		FROM Cours,Batches,Etudiante
+		WHERE Cours.Ccode LIKE Batches.Ccode AND Etudiante.Bcode LIKE Batches.Bcode AND Etudiante.Rollno = :new.Rollno;
+
+		SELECT SUM(total) INTO totale_deja_payee
+		FROM Payment
+		WHERE Payment.Rollno = :new.Rollno;
+
+		rest_a_payer := total_a_payer - totale_deja_payee;
+
+		DBMS_OUTPUT.PUT_LINE('Montant a payer : ' || total_a_payer);
+		DBMS_OUTPUT.PUT_LINE('Montant deja paye : ' || totale_deja_payee);
+		DBMS_OUTPUT.PUT_LINE('Reste a payer : ' || rest_a_payer);
+
+		IF (rest_a_payer - :new.total) > 0 THEN
+			RAISE_APPLICATION_ERROR(-20001, 'Transaction failed, add money');
+		END IF;
+END;
+/
+ --::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ --Exercice 3
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE TRIGGER add_update_delete_cours
+		BEFORE INSERT OR UPDATE OR DELETE
+		ON Cours
+BEGIN
+		IF MOD(TO_CHAR(SYSDATE, 'J'), 7) + 1 IN (7) THEN
+			RAISE_APPLICATION_ERROR(-20001, 'Va jouer ailleur');
+		END IF;
+END;
+/
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+--Exercice 4
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE TRIGGER check_frais
+		BEFORE UPDATE
+		ON Cours
+		FOR EACH ROW
+BEGIN
+		IF (:new.frais - :old.frais) > (:old.frais / 2) THEN
+			RAISE_APPLICATION_ERROR(-20001, 'Half exceeded');
+		END IF;
+END;
+/
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+--Exercice 5
+
+SET SERVEROUTPUT ON;
+CREATE OR REPLACE TRIGGER delete_cours
+		BEFORE DELETE
+		ON Cours
+DECLARE
+		now_time TIMESTAMP := systimestamp;
+BEGIN
+		IF EXTRACT(HOUR FROM now_time) < 21 AND EXTRACT(HOUR FROM now_time) >= 9 THEN
+			RAISE_APPLICATION_ERROR(-20001, 'Rush hour go drink coffee');
+		END IF;
+END;
+/

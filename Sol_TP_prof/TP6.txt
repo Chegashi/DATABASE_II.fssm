@@ -1,0 +1,327 @@
+--/////////////////////////////////////////////////////////////////////////////////////////////////////////
+--//////////////////////////////////////////// Excercice 1 ////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////////////////////
+CREATE TABLE Dept(
+	deptno integer PRIMARY KEY,
+	dname varchar(30),
+	loc varchar(50)
+);
+
+
+CREATE TABLE Emp(
+	empno integer PRIMARY KEY,
+	ename varchar(20),
+	job varchar(30),
+	mgr integer,
+	hiredate date DEFAULT(SYSDATE),
+	sal number(8,2),
+	comm number(8,2) null,
+	deptno integer,
+	FOREIGN KEY(deptno) REFERENCES Dept(deptno)
+);
+
+CREATE TABLE emp1(
+    EMPNO NUMBER NOT NULL, 
+    ENAME VARCHAR2(20 char) NOT NULL, 
+    JOBB VARCHAR2(20 char) NOT NULL, 
+    MGR NUMBER NULL, 
+    HIREDATE DATE NOT NULL, 
+    SAL DOUBLE NOT NULL, 
+    COMM DOUBLE NULL, 
+    DEPTNO NUMBER NOT NULL,
+    CONSTRAINT EMPNO_PK PRIMARY KEY (EMPNO),
+    CONSTRAINT DeptNo FOREIGN KEY (DEPTNO) references dept (deptno)
+);
+
+
+INSERT ALL 
+	INTO DEPT(deptno,dname,loc)
+		VALUES(10,'Neuro-science departement','west')
+	INTO DEPT(deptno,dname,loc)
+		VALUES(20,'Optic-sicence departement','north')
+	INTO DEPT(deptno,dname,loc)
+		VALUES(30,'Applied-science departement','east')
+SELECT * FROM Dual;
+
+
+
+INSERT ALL
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7369,'SMITH','CLERK',7902,TO_DATE('17/12/90','dd/mm/yy'),800.00,NULL,20)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7499,'ALLEN','SALESMAN',7698,TO_DATE('20/02/91','dd/mm/yy'),1600.00,300.00,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7521,'WARD','SALESMAN',7698,TO_DATE('22/02/91','dd/mm/yy'),1250.00,500.00,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7566,'JONES','MANAGER',7839,TO_DATE('02/04/91','dd/mm/yy'),2975.00,NULL,20)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7654,'MARTIN','SALESMAN',7698,TO_DATE('28/09/91','dd/mm/yy'),1250.00,1400.00,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7698,'BLAKE','MANAGER',7839,TO_DATE('01/05/91','dd/mm/yy'),2850.00,NULL,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7782,'CLARK','MANAGER',7839,TO_DATE('09/06/91','dd/mm/yy'),2450.00,NULL,10)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7788,'SCOTT','ANALYST',7566,TO_DATE('09/11/91','dd/mm/yy'),3000.00,NULL,20)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7839,'KING','PRESIDENT',NULL,TO_DATE('17/11/91','dd/mm/yy'),5000.00,NULL,10)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7844,'TURNER','SALLESMAN',7698,TO_DATE('08/09/91','dd/mm/yy'),1500.00,0.00,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7876,'ADAMS','CLERK',7788,TO_DATE('23/09/91','dd/mm/yy'),1100.00,NULL,20)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7900,'JAMES','CLERK',7698,TO_DATE('03/12/91','dd/mm/yy'),950.00,NULL,30)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7902,'FORD','ANALYST',7566,TO_DATE('03/12/91','dd/mm/yy'),3000.00,NULL,20)
+	INTO Emp(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+		VALUES(7934,'MILLER','CLERK',7782,TO_DATE('23/01/92','dd/mm/yy'),1300.00,NULL,10)
+SELECT * FROM Dual;
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 1
+CREATE TABLE Emp_FR AS (SELECT * FROM Emp);
+DELETE FROM Emp_FR;
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 2
+SET SERVEROUTPUT ON
+DECLARE
+	CURSOR curs_emp IS SELECT * FROM Emp;
+	NO_EMPLOYEE_EXCEPTION EXCEPTION;
+	PRAGMA EXCEPTION_INIT(NO_EMPLOYEE_EXCEPTION , -69);
+	Employee Emp%ROWTYPE;
+	table_full boolean := FALSE;
+BEGIN
+	-- Ouverture de curseur
+	OPEN curs_emp;
+
+	-- Traitement
+
+	LOOP
+		FETCH curs_emp INTO Employee;
+		EXIT WHEN curs_emp%NOTFOUND;
+		-- Cas ou la table EMP est vide
+		table_full := true;
+		Employee.sal := Employee.sal * 6;
+		Employee.sal := Employee.sal * 1.25;
+		INSERT INTO Emp_FR VALUES Employee;
+	END LOOP;
+
+	-- Cas ou la table EMP est vide
+	IF table_full = FALSE THEN
+		RAISE NO_EMPLOYEE_EXCEPTION;
+		RETURN;
+	END IF;
+
+	Exception
+		WHEN NO_EMPLOYEE_EXCEPTION THEN
+			DBMS_OUTPUT.PUT_LINE('[!]Error : Pas d employer');
+		WHEN OTHERS THEN
+			DBMS_OUTPUT.PUT_LINE('[!]Error : Err msg = ' || sqlerrm || ' Err code = ' || sqlcode);
+
+END;
+/
+
+--/////////////////////////////////////////////////////////////////////////////////////////////////////////
+--//////////////////////////////////////////// Excercice 2 ////////////////////////////////////////////////
+--/////////////////////////////////////////////////////////////////////////////////////////////////////////
+CREATE TABLE Etudiant(
+	num_etd integer PRIMARY KEY,
+	nom_etd varchar(20),
+	prenom_etd varchar(20)
+);
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 1.1
+CREATE TABLE Matiere(
+	code_m varchar(20) PRIMARY KEY,
+	coef_cc numeric(6,2),
+	coef_ex numeric(6,2)
+);
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 1.2
+CREATE TABLE Notation(
+	num_etd integer,
+	code_m varchar(20),
+	note_cc numeric(4,2),
+	note_ex numeric(4,2),
+	PRIMARY KEY (num_etd,code_m)
+);
+
+ALTER TABLE Notation
+ADD CONSTRAINT FK_NOTATION_MATIERE FOREIGN KEY (code_m) REFERENCES Matiere(code_m);
+
+ALTER TABLE Notation
+ADD CONSTRAINT FK_NOTATION_ETUDIANT FOREIGN KEY (num_etd) REFERENCES Etudiant(num_etd);
+
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+INSERT ALL 
+	INTO Etudiant(num_etd,nom_etd,prenom_etd)
+		VALUES(1,'Nom','Prenom')
+	INTO Etudiant(num_etd,nom_etd,prenom_etd)
+		VALUES(2,'Jason','Becker')
+	INTO Etudiant(num_etd,nom_etd,prenom_etd)
+		VALUES(3,'Davide','Hermes')
+SELECT * FROM Dual;
+
+INSERT INTO Etudiant(num_etd,nom_etd,prenom_etd)
+		VALUES(4,'Guy','Hadda');
+
+INSERT ALL 
+	INTO Matiere(code_m,coef_cc,coef_ex)
+		VALUES('ora',0.2,0.8)
+	INTO Matiere(code_m,coef_cc,coef_ex)
+		VALUES('java',0.4,0.6)
+	INTO Matiere(code_m,coef_cc,coef_ex)
+		VALUES('reseau',0.3,0.7)
+	INTO Matiere(code_m,coef_cc,coef_ex)
+		VALUES('web',0.5,0.5)
+SELECT * FROM Dual;
+
+
+INSERT ALL 
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(1,'ora',16.00,18.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(1,'java',15.00,12.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(1,'reseau',18.00,14.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(1,'web',19.00,15.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(2,'ora',10.00,19.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(2,'java',06.00,18.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(2,'reseau',20.00,10.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(2,'web',13.00,12.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(3,'ora',17.00,18.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(3,'java',15.00,12.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(3,'reseau',16.00,14.00)
+	INTO Notation(num_etd,code_m,note_cc,note_ex)
+		VALUES(3,'web',16.00,16.00)
+SELECT * FROM Dual;
+
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 2.1
+
+CREATE TABLE Resultat(
+	num_r integer AUTO_INCREMENT,
+	num_etd integer,
+	code_m varchar(20),
+	note_glb numeric(4,2),
+	PRIMARY KEY (num_r,num_etd,code_m)
+);
+
+CREATE SEQUENCE resultat_seq
+    START WITH 1
+    INCREMENT BY 1;
+
+ALTER TABLE Resultat
+ADD CONSTRAINT ai AUTO_INCREMENT(num_r);
+
+ALTER TABLE Resultat
+ADD CONSTRAINT FK_RESULTAT_ETUDIANT FOREIGN KEY (num_etd) REFERENCES Etudiant(num_etd);
+
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 2.2
+
+CREATE TABLE Classement(
+	num_c integer,
+	num_etd integer,
+	moyenne numeric(4,2),
+	rang integer,
+	PRIMARY kEY (num_c,num_etd)
+)
+
+CREATE SEQUENCE classementt_seq
+    START WITH 1
+    INCREMENT BY 1;
+
+ALTER TABLE Classement
+ADD CONSTRAINT FK_CLASSEMENT_ETUDIANT FOREIGN KEY (num_etd) REFERENCES Etudiant(num_etd);
+
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 3
+-- Solution sans jointure
+SET SERVEROUTPUT ON
+DECLARE
+	CURSOR matiere_curs IS SELECT * FROM Matiere ORDER BY Matiere.code_m DESC;
+	CURSOR notation_curs IS SELECT * FROM Notation ORDER BY Notation.code_m DESC;
+	matiere_tuple Matiere%ROWTYPE;
+	notation_tuple Notation%ROWTYPE;
+	note_globale Notation.note_cc%TYPE;
+BEGIN
+	OPEN matiere_curs;
+	OPEN notation_curs;
+	<<OUTER_LOOP>>
+	LOOP
+		FETCH matiere_curs INTO matiere_tuple;
+		EXIT OUTER_LOOP WHEN matiere_curs%NOTFOUND;
+		<<NESTED_LOOP>>
+		LOOP
+			FETCH notation_curs INTO notation_tuple;
+			EXIT NESTED_LOOP WHEN notation_curs%NOTFOUND;
+			IF notation_tuple.code_m LIKE(matiere_tuple.code_m) THEN
+				note_globale := (NVL(notation_tuple.note_cc,0) * matiere_tuple.coef_cc) + (NVL(notation_tuple.note_ex,0) * matiere_tuple.coef_ex);
+				INSERT INTO RESULTAT(num_r,num_etd,code_m,note_glb) VALUES (resultat_seq.nextval,notation_tuple.num_etd,matiere_tuple.code_m,note_globale);
+			ELSE
+				FETCH matiere_curs INTO matiere_tuple;
+				IF matiere_curs%NOTFOUND THEN
+					EXIT OUTER_LOOP;
+				END IF;
+				note_globale := (NVL(notation_tuple.note_cc,0) * matiere_tuple.coef_cc) + (NVL(notation_tuple.note_ex,0) * matiere_tuple.coef_ex);
+				INSERT INTO RESULTAT(num_r,num_etd,code_m,note_glb) VALUES (resultat_seq.nextval,notation_tuple.num_etd,matiere_tuple.code_m,note_globale);
+			END IF;
+		END LOOP;
+	END LOOP;
+
+	EXCEPTION
+		WHEN NO_DATA_FOUND THEN
+			DBMS_OUTPUT.PUT_LINE('[!] Error : Table matiere Ou Notation est vide');
+		WHEN OTHERS THEN 
+			DBMS_OUTPUT.PUT_LINE('[!]Error : Err msg = ' || sqlerrm || ' Err code = ' || sqlcode);
+
+END;
+/
+--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+-- Question 4
+SET SERVEROUTPUT ON
+DECLARE
+	CURSOR resultat_curs IS SELECT num_etd, SUM(note_glb)/COUNT(code_m) AS GLOBAL FROM RESULTAT GROUP BY num_etd ORDER BY GLOBAL DESC;
+	CURSOR etudiant_pas_de_notes IS SELECT num_etd FROM Etudiant MINUS SELECT num_etd FROM RESULTAT;
+	numero_etudiant Resultat.num_etd%TYPE;
+	moyenne_globale Classement.moyenne%TYPE;
+	etd_rang integer :=0;
+	last_iteration_moyenne Classement.moyenne%TYPE := 0;
+BEGIN
+	--Etuadiant avec des notes
+	OPEN resultat_curs;
+
+	LOOP
+		FETCH resultat_curs INTO numero_etudiant, moyenne_globale;
+		EXIT WHEN resultat_curs%NOTFOUND;
+		IF last_iteration_moyenne = moyenne_globale THEN 
+			INSERT INTO Classement VALUES(Classementt_seq.nextval,numero_etudiant,moyenne_globale, etd_rang);
+		ELSE
+			etd_rang := etd_rang+1;
+			INSERT INTO Classement VALUES(Classementt_seq.nextval,numero_etudiant,moyenne_globale, etd_rang);
+		END IF;
+		last_iteration_moyenne := moyenne_globale;
+	END LOOP;
+
+	-- Etudiant sans notes
+	OPEN etudiant_pas_de_notes;
+	etd_rang := etd_rang+1;
+	LOOP
+		FETCH etudiant_pas_de_notes INTO numero_etudiant;
+		EXIT WHEN etudiant_pas_de_notes%NOTFOUND;
+		INSERT INTO Classement VALUES(Classementt_seq.nextval,numero_etudiant,0, etd_rang);
+	END LOOP;
+	EXCEPTION
+		WHEN NO_DATA_FOUND THEN
+			DBMS_OUTPUT.PUT_LINE('[!] Error : Table RESULTAT est vide');
+		WHEN OTHERS THEN
+			DBMS_OUTPUT.PUT_LINE('[!]Error : Err msg = ' || sqlerrm || ' Err code = ' || sqlcode);
+END;
+/

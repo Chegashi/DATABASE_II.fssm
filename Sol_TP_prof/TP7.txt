@@ -1,0 +1,48 @@
+--Exercice 1
+SELECT nomfou ,(SELECT COUNT(numprod)
+				FROM PROPOSER P
+				WHERE P.numfou = F.numfou
+				) AS NB_PROD_PROPOSES
+FROM FOURNISSEUR F;
+
+--Exercice 2
+SELECT nomfou 
+FROM FOURNISSEUR
+WHERE numfou IN(SELECT numfou
+				FROM PROPOSER
+				WHERE numprod = 2 ) ;
+				
+--Exercice 3				
+SELECT nomfou
+FROM FOURNISSEUR
+WHERE numfou IN(SELECT numfou
+				FROM PROPOSER
+				WHERE numprod =(SELECT numprod
+								FROM PRODUIT
+								WHERE nomprod = 'Poupée Batman')
+) ;
+
+--Exercice 4
+SELECT nomfou
+FROM FOURNISSEUR
+WHERE numfou IN(SELECT numfou
+				FROM DETAILLIVRAISON
+				WHERE numprod IN(SELECT numprod
+								FROM PRODUIT
+								WHERE nomprod = 'Poupée Batman')
+) ;
+
+--Exercice 5
+SELECT nomfou
+FROM FOURNISSEUR F
+WHERE (SELECT COUNT(*)
+		FROM PROPOSER PR
+		WHERE F. numfou = PR. numfou) > 0
+AND
+	(SELECT COUNT(DISTINCT numprod)
+	 FROM DETAILLIVRAISON D
+	 WHERE F. numfou = D. numfou)
+=
+	(SELECT COUNT(*)
+	 FROM PROPOSER PR
+	 WHERE F. numfou = PR. numfou) ;
